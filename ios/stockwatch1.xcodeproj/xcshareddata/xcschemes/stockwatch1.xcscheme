@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "TestProject1.app"
-               BlueprintName = "TestProject1"
-               ReferencedContainer = "container:TestProject1.xcodeproj">
+               BuildableName = "stockwatch1.app"
+               BlueprintName = "stockwatch1"
+               ReferencedContainer = "container:stockwatch1.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "TestProject1Tests.xctest"
-               BlueprintName = "TestProject1Tests"
-               ReferencedContainer = "container:TestProject1.xcodeproj">
+               BuildableName = "stockwatch1Tests.xctest"
+               BlueprintName = "stockwatch1Tests"
+               ReferencedContainer = "container:stockwatch1.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "TestProject1.app"
-            BlueprintName = "TestProject1"
-            ReferencedContainer = "container:TestProject1.xcodeproj">
+            BuildableName = "stockwatch1.app"
+            BlueprintName = "stockwatch1"
+            ReferencedContainer = "container:stockwatch1.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "TestProject1.app"
-            BlueprintName = "TestProject1"
-            ReferencedContainer = "container:TestProject1.xcodeproj">
+            BuildableName = "stockwatch1.app"
+            BlueprintName = "stockwatch1"
+            ReferencedContainer = "container:stockwatch1.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
