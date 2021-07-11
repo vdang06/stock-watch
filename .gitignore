@@ -57,3 +57,8 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+# APIs, secrets
+/src/common/constants.js
+/src/common/secrets.js
+/android/app/google-services.json

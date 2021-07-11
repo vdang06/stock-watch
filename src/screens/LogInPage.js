@@ -1,18 +1,35 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import firebase from "@react-native-firebase/app";
+// import "@react-native-firebase/auth"
+
 import { View, Button ,Text, TextInput, Image, ImageBackground , TouchableOpacity, zIndex ,StyleSheet } from "react-native"; 
 
 
-const LogInPage = () => {
-    const [username, setUser] = useState('')
+export const LogInPage = () => {
+
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    console.log("hi");
+    const handleLoginPress = () => {
+        firebase.auth().signInWithEmailAndPassword(username, password)
+            .then((userCredential) => {     
+                var user = userCredential.user;
+                
+            })
+            .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+            })
+    }
+
+
 
     return (
 
         <View style={styles.container}>
-            <ImageBackground source={require("../../assets/apple_id_desktop_2x.jpg")} style={styles.image} />
-            <View style={[styles.loginform]}>
+            <ImageBackground source={require("../assets/apple_id_desktop_2x.jpg")} style={styles.image} />
+            <Image source={require("../assets/apple_logo.png")} style={styles.logo} />  
+            <View style={[styles.loginform]}>     
                  <Text 
                     style={{ 
                         //Objects within objects, Remember valid obj must have Key & value
@@ -25,6 +42,7 @@ const LogInPage = () => {
                 <Text 
                     style={{
                         fontSize: 12,
+                        color: "white",
                         marginBottom: 50,  
                         // Padding protects your insides
                         // Keep margin out, don't get called  
@@ -38,7 +56,7 @@ const LogInPage = () => {
                     textAlign="left"
                     placeholder="Apple ID"
                     autoCapitalize="none"
-                    onChangeText={setUser}
+                    onChangeText={setUsername}
                     value={username}
                 />
                 <TextInput 
@@ -49,11 +67,23 @@ const LogInPage = () => {
                     onChangeText={setPassword}
                     value={password}
                 />
-                <Button
-                    title="Log In"
-                />
+                <TouchableOpacity>
+                    <Text 
+                        style={{
+                            fontSize: 20,
+                            backgroundColor: "grey",
+                            borderColor: "grey",
+                            borderWidth: 10,
+                            borderRadius: 12,
+                            overflow: "hidden",
+                            color: "white"
+                        }}
+                        onPress={handleLoginPress}
+                    >
+                        Log In
+                    </Text>
+                </TouchableOpacity>
             </View>
-            <Image source={require("../../assets/apple_logo.png")} />
         </View>
 
     )
@@ -70,17 +100,26 @@ const styles = StyleSheet.create({
         resizeMode: "contain",
         zIndex: 0
     },
+    logo: {
+        width: 50,
+        height: 200,
+        justifyContent: "center",
+        alignSelf: "center",
+        position: "absolute",
+        resizeMode: "contain"
+    },
     loginform: {
         paddingTop: "60%",
         justifyContent: "center",
         alignItems: "center"
     },
     header: {
-        color: "black",
+        color: "white",
         textAlign: "center",
         fontSize: 30
     },
     input: {
+        backgroundColor: "white",
         height: 40,
         width: "60%",
         margin: 5,
