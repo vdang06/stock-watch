@@ -1,4 +1,4 @@
-package com.testproject1;
+package com.stockwatch1;
 
 import android.app.Application;
 import android.content.Context;

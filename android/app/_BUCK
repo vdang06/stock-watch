@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.testproject1",
+    package = "com.stockwatch1",
 )
 
 android_resource(
     name = "res",
-    package = "com.testproject1",
+    package = "com.stockwatch1",
     res = "src/main/res",
 )
 
