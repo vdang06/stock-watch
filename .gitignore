@@ -62,3 +62,4 @@ buck-out/
 /src/common/constants.js
 /src/common/secrets.js
 /android/app/google-services.json
+/ios/GoogleService-Info.plist
