@@ -1,4 +1,5 @@
 import React from 'react';
+import 'react-native-gesture-handler';
 import firebase from "@react-native-firebase/app";
 import { FBDB_CONFIG } from './src/common/secrets';
 

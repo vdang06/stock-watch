@@ -92,13 +92,12 @@ export const LogInPage = ({ navigation }) => {
                     onPress={handleLoginPress}
                 />
             </View>
-
+        
             <Button
                 title="don't have an account? sign up now!"
                 color="grey"
                 onPress={() => {navigation.navigate("Signup")}}
             />
-
         </SafeAreaView>
 
     )
@@ -107,6 +106,7 @@ export const LogInPage = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexDirection: "column",
         justifyContent: "space-between"
     },
     image: {
@@ -125,9 +125,10 @@ const styles = StyleSheet.create({
         resizeMode: "contain"
     },
     loginform: {
-        paddingTop: "50%",
+        //paddingTop: "50%",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        flex: 1
     },
     header: {
         color: "black",

@@ -11,7 +11,7 @@ export const SignUpPage = ({ navigation }) => {
     const handleSignUpPress = () => {
         firebase.auth().createUserWithEmailAndPassword(username, password)
         .then((auth) => {
-            // handleInitWrite();
+            handleInitWrite();
             console.log("Sign up passed")
         })
         .catch((error) => {
@@ -22,10 +22,11 @@ export const SignUpPage = ({ navigation }) => {
         })
     }
 
-    // const handleInitWrite = () => {
-    //     const user = firebase.auth().currentUser;
-    //     firebase.database().ref("users/").push(user.uid);
-    // }
+    const handleInitWrite = () => {
+        const user = firebase.auth().currentUser;
+        const holdings = false;
+        firebase.database().ref("users/" + user.uid).child("holdings").set(holdings);
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -91,7 +92,7 @@ export const SignUpPage = ({ navigation }) => {
             </View>
             
             <Button
-                title="already have an account? go back."
+                title="already have an account?"
                 color="grey"
                 onPress={() => {navigation.navigate("Login")}}
             />

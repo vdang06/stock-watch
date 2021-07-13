@@ -14,41 +14,48 @@ export const HomePage = ( {navigation} ) => {
     const user = firebase.auth().currentUser;
     const [ userHoldings, setuserHoldings ] = useState([]);
     const [ editMode, seteditMode ] = useState(false);
-    const pdata = [];
 
-    firebase
-    .database()
-    .ref("users/" + user.uid)
-    .child("holdings/")
-    .once("value", (data) => {
-        var exdata = data.val();
-        
+    //const [ tdata, settdata ] = useState([]);
+    //settdata((prevtdata) => [...prevtdata, exdata[k]])
 
-        Object.keys(exdata).forEach(k => {
-            pdata.push(exdata[k]);
-        });
-        console.log(pdata);
-        pdata.sort(function(a, b) {
-            var nameA = a.name.toUpperCase(); 
-            var nameB = b.name.toUpperCase(); 
-            if (nameA < nameB) {
-              return -1;
-            }
-            if (nameA > nameB) {
-              return 1;
-            }
-          });
-        setuserHoldings(pdata); 
 
-    })
-    console.log(pdata);
+    //console.log(pdata);
+    
+    //useEffect handles component life cycles/side effects, no dep. run once
     useEffect( () => {
-        firebase.database().ref("users/" + user.uid).child("holdings/").on("child_changed", (snapshot) => {
-            console.log("holdings updated");
+        // firebase.database().ref("users/" + user.uid).child("holdings/").on("child_changed", (snapshot) => {
+        //     console.log("holdings updated",snapshot.val());
+        // });
+        const holdingsRef = firebase.database().ref(`users/${user.uid}`).child("holdings/")
+        holdingsRef.on("value", (data) => {
+            var exdata = data.val();
+            const pdata = [];
+    
+            Object.keys(exdata).forEach(k => {
+                pdata.push(exdata[k]);
+                
+            });
+    
+            
+            console.log("getdata");
+            pdata.sort(function(a, b) {
+                var nameA = a.name.toUpperCase(); 
+                var nameB = b.name.toUpperCase(); 
+                if (nameA < nameB) {
+                  return -1;
+                }
+                if (nameA > nameB) {
+                  return 1;
+                }
+                return 0;
+              });
+            setuserHoldings(pdata); 
+    
         })
-        return function cleanup() {
-            firebase.database().ref().off();
+        return () => {
+            holdingsRef.off();
         }
+        //})
     },[])
 
 
@@ -78,7 +85,7 @@ export const HomePage = ( {navigation} ) => {
                             style={{
                                 fontSize: 30
                             }}>
-                                holdings & watchlist
+                                holdings &amp; watchlist
                         </Text>
                         <TouchableOpacity>
                             <Icon 
@@ -132,13 +139,18 @@ export const HomePage = ( {navigation} ) => {
                     style={{
                         color: "blue"
                     }}
-                    onPress={ () => firebase.auth().signOut().then(() => {
-                        console.log("Signed out!")
-                    }).catch((error) => {
-                        console.log(error)
-                    })
-                    }
-                    >
+                    onPress={() => {
+                        firebase
+                            .auth()
+                            .signOut()
+                            .then(() => {
+                                console.log("Signed out!")
+                            })
+                            .catch((error) => {
+                                console.log(error)
+                            })
+                    }}
+                >
                     Log Out
                 </Text>
             </TouchableOpacity>
