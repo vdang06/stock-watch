@@ -1,38 +1,35 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Button, View, Text, StyleSheet, TextInput, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "@react-native-firebase/app";
-// import "@react-native-firebase/auth"
 
-import { Alert, View, Button ,Text, TextInput, Image, ImageBackground , TouchableOpacity, zIndex ,StyleSheet } from "react-native"; 
+export const SignUpPage = ({ navigation }) => {
 
+    const [ username, setUsername ] = useState("");
+    const [ password, setPassword ] = useState("");
 
-
-export const LogInPage = ({ navigation }) => {
-
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-
-    const handleLoginPress = () => {
-        firebase.auth().signInWithEmailAndPassword(username, password)
-            .then(() => {
-                console.log("Login Success")
-            })
-            .catch((error) => {
-                var err = error.message;
-                var matches = err.search(/]/) + 1;
-                var trimmedError = (err.slice(matches)).trim();
-                Alert.alert("Login Failed", trimmedError);
-            })
+    const handleSignUpPress = () => {
+        firebase.auth().createUserWithEmailAndPassword(username, password)
+        .then((auth) => {
+            // handleInitWrite();
+            console.log("Sign up passed")
+        })
+        .catch((error) => {
+            var err = error.message;
+            var matches = err.search(/]/) + 1;
+            var trimmedError = (err.slice(matches)).trim();
+            Alert.alert("Signup Failed", trimmedError);
+        })
     }
 
-
+    // const handleInitWrite = () => {
+    //     const user = firebase.auth().currentUser;
+    //     firebase.database().ref("users/").push(user.uid);
+    // }
 
     return (
-
         <SafeAreaView style={styles.container}>
-            {/* <ImageBackground source={require("../assets/apple_id_desktop_2x.jpg")} style={styles.image} /> */}
-            {/* <Image source={require("../assets/apple_logo.png")} style={styles.logo} />   */}
-            <View style={[styles.loginform]}>     
+            <View style={[styles.form]}>     
                  <Text 
                     style={{ 
                         //Objects within objects, Remember valid obj must have Key & value
@@ -40,7 +37,7 @@ export const LogInPage = ({ navigation }) => {
                         ...styles.header
                     }}
                 >
-                    stockwatch
+                    sign up
                 </Text>
                 <Text 
                     style={{
@@ -51,13 +48,13 @@ export const LogInPage = ({ navigation }) => {
                         // Keep margin out, don't get called  
                     }}
                 >   
-                    a simple portfolio tracker and watchlist
+                    do it, it's free
                 </Text>
                  
                 <TextInput 
                     style={styles.input}
                     textAlign="left"
-                    placeholder="email"
+                    placeholder="enter an email"
                     autoCapitalize="none"
                     onChangeText={setUsername}
                     value={username}
@@ -65,7 +62,7 @@ export const LogInPage = ({ navigation }) => {
                 <TextInput 
                     style={styles.input}
                     textAlign="left" 
-                    placeholder="password"
+                    placeholder="enter a password"
                     secureTextEntry={true}
                     onChangeText={setPassword}
                     value={password}
@@ -87,20 +84,18 @@ export const LogInPage = ({ navigation }) => {
                     </Text>
                 </TouchableOpacity> */}
                 <Button
-                    title="login"
+                    title="done"
                     borderWidth="5"
-                    onPress={handleLoginPress}
+                    onPress={handleSignUpPress}
                 />
             </View>
-
+            
             <Button
-                title="don't have an account? sign up now!"
+                title="already have an account? go back."
                 color="grey"
-                onPress={() => {navigation.navigate("Signup")}}
+                onPress={() => {navigation.navigate("Login")}}
             />
-
         </SafeAreaView>
-
     )
 }
 
@@ -109,22 +104,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "space-between"
     },
-    image: {
-        height: "100%",
-        width: "100%",
-        position: "absolute",
-        resizeMode: "contain",
-        zIndex: 0
-    },
-    logo: {
-        width: 50,
-        height: 200,
-        justifyContent: "center",
-        alignSelf: "center",
-        position: "absolute",
-        resizeMode: "contain"
-    },
-    loginform: {
+    form: {
         paddingTop: "50%",
         justifyContent: "center",
         alignItems: "center"
@@ -142,5 +122,4 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         borderWidth: 0.3
     }
-  })
-export default LogInPage;
+})
