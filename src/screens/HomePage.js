@@ -1,92 +1,165 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, View, Button ,Text, TextInput, Image, ImageBackground , TouchableOpacity, zIndex , StyleSheet, SafeAreaView, Platform } from "react-native"; 
-import { SearchBar, ListItem } from "react-native-elements";
-import "@react-native-firebase/auth";
-import { firebase } from "@react-native-firebase/auth";
-import { FINNHUB } from "../common/constants";
-import { json } from "express";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { FlatList, View, Button ,Text, TextInput, Image, ImageBackground, TouchableOpacity, TouchableHighlight, zIndex, StyleSheet, Platform } from "react-native"; 
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
+import { isEmpty } from "lodash";
+import { firebase } from "@react-native-firebase/app";
 
-export const HomePage = () => {
+import { ListItem } from "react-native-elements";
+import Icon from "react-native-vector-icons/MaterialIcons";
+
+export const HomePage = ( {navigation} ) => {
 
     const user = firebase.auth().currentUser;
-    const [ search, setSearch ] = useState("");
-    const [ fhdata , setfhdata ] = useState([]);
-    
+    const [ userHoldings, setuserHoldings ] = useState([]);
+    const [ editMode, seteditMode ] = useState(false);
+    const pdata = [];
 
-    const handleSearch = (val) => {
-        fetch(`https://finnhub.io/api/v1/search?q=${val}&token=${FINNHUB.apiKey}`)
-        .then(res => res.json())
-        .then((res) => {
-            setfhdata(res.result);
-        })
-        .catch((e) => console.error(e))
+    firebase
+    .database()
+    .ref("users/" + user.uid)
+    .child("holdings/")
+    .once("value", (data) => {
+        var exdata = data.val();
         
-    }
 
+        Object.keys(exdata).forEach(k => {
+            pdata.push(exdata[k]);
+        });
+        console.log(pdata);
+        pdata.sort(function(a, b) {
+            var nameA = a.name.toUpperCase(); 
+            var nameB = b.name.toUpperCase(); 
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+          });
+        setuserHoldings(pdata); 
+
+    })
+    console.log(pdata);
     useEffect( () => {
-        if (search.length && search.trim()) {
-            const searchTimeOut = setTimeout( () => handleSearch(search), 500);
-            return () => clearTimeout(searchTimeOut);
+        firebase.database().ref("users/" + user.uid).child("holdings/").on("child_changed", (snapshot) => {
+            console.log("holdings updated");
+        })
+        return function cleanup() {
+            firebase.database().ref().off();
         }
-        else setfhdata([]);
-    },[search]);
-
-
-    console.log("SEARCHBAR: " + search);
-    console.log(JSON.stringify(fhdata));
+    },[])
 
 
     return (
-        <SafeAreaView style={{ flex : 1 }}>
-            <View>
-                <SearchBar
-                    containerStyle={{ backgroundColor : "f2f2f2" }}
-                    placeholder="Search for your favourite stocks"
-                    onChangeText={setSearch}
-                    platform={Platform.OS}
-                    value={search}
-                />
-                <FlatList 
-                    data={fhdata}
-                    keyExtractor={(item, index) => index.toString()}
-                    contentContainerStyle={{paddingBottom: 20}}
-                    renderItem={({ item }) => ( //round parantheses imply return, curly do not have return unless explicitly stated
-                        <ListItem bottomDivider>
-                            <ListItem.Content>
-                                <ListItem.Title>{item.description}</ListItem.Title>
-                                <ListItem.Subtitle>{item.displaySymbol}</ListItem.Subtitle>
-                            </ListItem.Content>
-                        </ListItem>
-                    )}
-                    
-                />
-                <Text style={{
-                    alignSelf: "center",
-                    paddingTop: 350
-                }}
-                >
-                Welcome {user.email}
-                </Text>
-                <TouchableOpacity
+        <SafeAreaView style={styles.container}>
+            
+            {editMode
+                ? <View style ={styles.header}>
+                        <Text
+                            style={{
+                                fontSize:30,
+                                color:"grey"
+
+                            }}>
+                                editing
+                        </Text>
+                        <TouchableOpacity>
+                            <Icon
+                                name="done"
+                                size={30}
+                                onPress={() => seteditMode(false)}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                : <View style={styles.header}>
+                        <Text
+                            style={{
+                                fontSize: 30
+                            }}>
+                                holdings & watchlist
+                        </Text>
+                        <TouchableOpacity>
+                            <Icon 
+                            name="edit"
+                            size={30}
+                            onPress={() => seteditMode(true)}
+                            />
+                        </TouchableOpacity>
+                    </View>
+            }
+                
+            
+            {isEmpty(userHoldings) 
+                ? <Button 
+                      title="Add your favourite stocks now!"
+                      onPress={() => {navigation.navigate("Search")}}
+                  />
+                : <FlatList 
+                      style={styles.holdings}
+                      data={userHoldings}
+                      keyExtractor={(item, index) => index.toString()}
+                      //contentContainerStyle={{paddingBottom: useBottomTabBarHeight()}}
+                      renderItem={({item}) => (
+                          <ListItem 
+                              bottomDivider
+                              containerStyle={{backgroundColor: "white"}}
+                              underlayColor= "white"
+                              //onPress={() => handleDetails(item.symbol,item.description,{navigation})}
+                          >
+                              <ListItem.Content>
+                                  <ListItem.Title>{item.name}</ListItem.Title>
+                                  <ListItem.Subtitle>{item.symid}</ListItem.Subtitle>       
+                              </ListItem.Content>
+                              <ListItem.Chevron/>
+                          </ListItem>
+                      )}
+                  />
+            }
+
+            <Text style={{
+                alignSelf: "center"
+            }}
+            >
+            Welcome {user.email}
+            </Text>
+            <TouchableOpacity
+                style={{
+                    alignSelf: "center"
+                }}>
+                <Text 
                     style={{
-                        alignSelf: "center"
-                    }}>
-                    <Text 
-                        style={{
-                            color: "blue"
-                        }}
-                        onPress={ () => firebase.auth().signOut().then(() => {
-                            console.log("Signed out!")
-                        }).catch((error) => {
-                            console.log(error)
-                        })
-                        }
-                        >
-                        Log Out
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </ SafeAreaView>
+                        color: "blue"
+                    }}
+                    onPress={ () => firebase.auth().signOut().then(() => {
+                        console.log("Signed out!")
+                    }).catch((error) => {
+                        console.log(error)
+                    })
+                    }
+                    >
+                    Log Out
+                </Text>
+            </TouchableOpacity>
+        </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        margin: 10
+    },
+    holdings: {
+        flex: 1,
+        flexDirection: "column"
+    }
+})
+
+
+//Sign out

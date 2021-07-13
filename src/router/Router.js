@@ -1,47 +1,105 @@
-import React, { useState, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import firebase from "@react-native-firebase/app";
 import "@react-native-firebase/auth";
 import "@react-native-firebase/database";
-import { HomePage, LogInPage, SearchPage } from "../screens";
 
+import React, { useState, useEffect } from "react";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import { HomePage, LogInPage, SearchPage, DetailsPage, SignUpPage, AddHoldings } from "../screens";
+import { Loading } from "../common/loading";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 
 const HomeStack = createBottomTabNavigator();
+const InitStack = createStackNavigator();
+const SearchStack = createStackNavigator();
 
 const PublicRoutes = () => (
-    <LogInPage />
+    <NavigationContainer>
+        <InitStack.Navigator
+            headerMode="none"
+        >
+            <InitStack.Screen
+                name="Login"
+                component={LogInPage}
+            />
+            <InitStack.Screen
+                name="Signup"
+                component={SignUpPage}
+            />
+        </InitStack.Navigator>
+    </NavigationContainer>
+    
 )
 
-const AuthRoutes = () => (
+const HomeRoutes = () => (
     <NavigationContainer>
-        <HomeStack.Navigator>
+        <HomeStack.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                    let iconName;
+        
+                    if (route.name === "Home") {
+                      iconName = focused ? "insert-chart" : "insert-chart-outlined";
+                    } else if (route.name === "Search") {
+                      iconName = "search";
+                    }
+        
+                    // You can return any component that you like here!
+                    return <MaterialIcons name={iconName} size={size} color={color} />;
+                },
+                tabBarActiveTintColor: 'blue',
+                tabBarInactiveTintColor: 'gray',
+            })
+        }
+            tabBarOptions={{showLabel: false}}
+        >
             <HomeStack.Screen 
                 name="Home" 
                 component={HomePage}
             />
             <HomeStack.Screen
                 name="Search"
-                component={SearchPage}
+                component={SearchRoutes}
             />
         </HomeStack.Navigator>
     </NavigationContainer>
-    
 )
 
-const Router = () => {
+const SearchRoutes = () => (
+    <SearchStack.Navigator
+        headerMode="none"
+    >
+        <SearchStack.Screen
+            name="Search"
+            component={SearchPage}
+        />
+        <SearchStack.Screen
+            name="Details"
+            component={DetailsPage}
+        />
+        <SearchStack.Screen
+            name="AddHoldings"
+            component={AddHoldings}
+        />
+    </SearchStack.Navigator>
+)
 
-    const [auth, setAuth] = useState(null)
+
+const Router = (load) => {
+
+    const [auth, setAuth] = useState(null);
 
     console.log(auth)
     useEffect(() => {
-        firebase.auth().onAuthStateChanged(user => user ? setAuth(user) : setAuth(false))
-        
+        firebase.auth().onAuthStateChanged(user => user ? setAuth(user) : setAuth(false));
     }, [])
     
-    if (auth == null) return null;
-    if (auth) return <AuthRoutes />
+    if (auth == null) return <Loading />;
+    if (auth) return <HomeRoutes />;
     return <PublicRoutes />
 }
 
