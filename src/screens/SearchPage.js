@@ -43,18 +43,18 @@ export const SearchPage = ({ navigation }) => {
         else setfhdata([]);
     },[search]);
     
-    console.log("SEARCHBAR: " + search);
-    console.log(JSON.stringify(fhdata));
+    // console.log("SEARCHBAR: " + search);
+    // console.log(JSON.stringify(fhdata));
     
     return (
-        <SafeAreaView style={{ flex : 1}}>
+        <SafeAreaView style={{ flex : 1}} edges={["right", "left", "top"]}>
             <View>
                 <SearchBar
-                containerStyle={{ backgroundColor : "f2f2f2" }}
-                placeholder="Search for your favourite stocks"
-                onChangeText={setSearch}
-                platform={Platform.OS}
-                value={search}
+                    containerStyle={{ backgroundColor : "f2f2f2" }}
+                    placeholder="Search for your favourite stocks"
+                    onChangeText={setSearch}
+                    platform={Platform.OS}
+                    value={search}
                 />
                 <FlatList 
                     data={fhdata}
@@ -67,11 +67,11 @@ export const SearchPage = ({ navigation }) => {
                             underlayColor= "white"
                             onPress={() => handleDetails(item.symbol,item.description,{navigation})}
                         >
-                                <ListItem.Content>
-                                    <ListItem.Title>{item.description}</ListItem.Title>
-                                    <ListItem.Subtitle>{item.symbol}</ListItem.Subtitle>       
-                                </ListItem.Content>
-                                <ListItem.Chevron/>
+                            <ListItem.Content>
+                                <ListItem.Title>{item.description}</ListItem.Title>
+                                <ListItem.Subtitle>{item.symbol}</ListItem.Subtitle>       
+                            </ListItem.Content>
+                            <ListItem.Chevron/>
                         </ListItem>
                     )}
                 />
@@ -87,7 +87,7 @@ export const DetailsPage = ({ route, navigation }) => {
     const [ isLoading, setisLoading ] = useState(true);
     const [ fhError, setfhError ] = useState(false);
 
-    console.log(symId);
+    // console.log(symId);
     // FETCH FINNHUB PRICE DATA, make sure to include loading screen since API is high usage
     useEffect(() => {
         fetch(`https://finnhub.io/api/v1/quote?symbol=${symId}&token=${FINNHUB.apiKey}`)
@@ -105,7 +105,7 @@ export const DetailsPage = ({ route, navigation }) => {
     },[])
 
 
-    console.log(fhdata);
+    // console.log(fhdata);
 
     if (!isLoading && !fhError) return (
         <SafeAreaView style={styles.container}>
