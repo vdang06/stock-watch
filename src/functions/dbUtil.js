@@ -1,10 +1,18 @@
 import firebase from "@react-native-firebase/app";
 
-export const handleDoneEdit = (hld, callback) => {
-    hld.forEach((el) => {
-        hld[hld.indexOf(el)].flagRemove = false;
+export const handleDoneEdit = (hld, callback) => { //check this func, shouldnt work right now since userHoldings is read only
+    
+    const promises = hld.map((el) => {
+        return ({
+            ...el,
+            flagRemove: false //never use . to assign 
+        })
     })
-    return callback(false);
+    Promise.all(promises).then((res) => {
+        console.log(`PROMISE RESOLVED`,res);
+        callback(res);
+    })
+    
 }
 
 export const deleteState = (hld) => {
@@ -13,7 +21,7 @@ export const deleteState = (hld) => {
     }
     
     isStockFlagged = hld.find(toRemove);
-    console.log(`STOCKFLAG ${isStockFlagged}`);
+    console.log(`STOCKFLAG`,isStockFlagged);
     if (isStockFlagged) return true;
     return false;
 }
@@ -24,16 +32,18 @@ export const handleOnDel = (hld, callback) => {
     const queuedToDel = {}
 
     hld.forEach((el) => {
-        const dbEntry = hld[hld.indexOf(el)];
-        if (dbEntry.flagRemove) {
-            const dbKey = dbEntry.symid;
+        if (el.flagRemove) {
+            const dbKey = el.symid;
             queuedToDel[dbKey] = null;
             console.log(dbKey);
-            console.log(`del ${dbEntry.symid}`);
+            console.log(`del ${el.symid}`);
         }
     })
 
     console.log(queuedToDel);
-    holdingsRef.update(queuedToDel, console.log("UPDATE COMPLETE"));
-    callback();
+    holdingsRef.update(queuedToDel).then(() => {
+        console.log("UPDATE COMPLETE")
+        callback();
+    }) //Make sure to verify before writing data to db
+    
 }

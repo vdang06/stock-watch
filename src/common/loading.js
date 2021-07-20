@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ActivityIndicator, StyleSheet } from "react-native";
 
 export const Loading = () => (
-    <SafeAreaView style={[styles.container, styles.horizontal]}>
+    <SafeAreaView style={[styles.container, styles.horizontal]} edges={["top", "right", "left"]}>
         <ActivityIndicator size="large" />
     </SafeAreaView>
 )

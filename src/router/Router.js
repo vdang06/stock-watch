@@ -8,16 +8,19 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { HomePage, LogInPage, SearchPage, DetailsPage, SignUpPage, AddHoldings } from "../screens";
+import { HomePage, LogInPage, SearchPage, DetailsPage, SignUpPage, AddHoldings, NewsPage, ArticlePage } from "../screens";
 import { Loading } from "../common/loading";
+import { View } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
+const InitStack = createStackNavigator();
 
 const HomeStack = createBottomTabNavigator();
-const InitStack = createStackNavigator();
 const SearchStack = createStackNavigator();
+const ArticleStack = createStackNavigator();
 
-const PublicRoutes = () => (
+const PublicRoutes = ({ route }) => (
     <NavigationContainer>
         <InitStack.Navigator
             headerMode="none"
@@ -35,7 +38,7 @@ const PublicRoutes = () => (
     
 )
 
-const HomeRoutes = () => (
+const HomeRoutes = ({ route }) => (
     <NavigationContainer>
         <HomeStack.Navigator
             screenOptions={({ route }) => ({
@@ -43,19 +46,28 @@ const HomeRoutes = () => (
                     let iconName;
         
                     if (route.name === "Home") {
-                      iconName = focused ? "insert-chart" : "insert-chart-outlined";
+                      iconName = "home";
                     } else if (route.name === "Search") {
                       iconName = "search";
+                    } else if (route.name === "News") {
+                      iconName = focused ? "insert-chart" : "insert-chart-outlined";
                     }
         
                     // You can return any component that you like here!
                     return <MaterialIcons name={iconName} size={size} color={color} />;
                 },
-                tabBarActiveTintColor: 'blue',
-                tabBarInactiveTintColor: 'gray',
-            })
-        }
-            tabBarOptions={{showLabel: false}}
+                // tabBarActiveTintColor: 'white',
+                // tabBarInactiveTintColor: 'white',
+            })}
+            tabBarOptions={{
+                showLabel: false, 
+                style: {
+                    backgroundColor: "#547aff"
+                },
+                activeTintColor: "white",
+                inactiveTintColor: "#a0c8e8"
+            }}
+            lazy={false}
         >
             <HomeStack.Screen 
                 name="Home" 
@@ -65,13 +77,19 @@ const HomeRoutes = () => (
                 name="Search"
                 component={SearchRoutes}
             />
+            <HomeStack.Screen
+                name="News"
+                component={NewsRoutes}
+            />
         </HomeStack.Navigator>
     </NavigationContainer>
+
+
 )
 
-const SearchRoutes = () => (
+const SearchRoutes = ({ route }) => (
     <SearchStack.Navigator
-        headerMode="none"
+        headerMode={"none"}
     >
         <SearchStack.Screen
             name="Search"
@@ -87,6 +105,23 @@ const SearchRoutes = () => (
         />
     </SearchStack.Navigator>
 )
+
+const NewsRoutes = () => (
+    <ArticleStack.Navigator 
+        mode="modal"
+        headerMode="none"
+    >
+        <ArticleStack.Screen
+            name="NewsFeed"
+            component={NewsPage}
+        />
+        <ArticleStack.Screen
+            name="Article"
+            component={ArticlePage}
+        />
+    </ArticleStack.Navigator>
+)
+
 
 
 const Router = (load) => {
